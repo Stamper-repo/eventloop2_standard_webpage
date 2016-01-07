@@ -276,8 +276,6 @@ function performDrawPath(ctx, screenStartingPoint, listPathPart, pathStroke, pat
         handleScreenPathPart(ctx, listPathPart[i]);
     }
     
-    ctx.closePath();
-    
     handlePathStroke(ctx, pathStroke);
     handlePathFill(ctx, pathFill);
     
