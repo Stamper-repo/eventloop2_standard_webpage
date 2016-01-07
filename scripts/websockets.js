@@ -1,22 +1,12 @@
 
 function SocketsToConnect() {
-    this.toConnect = [];
-    
     this.addToConnect = function(websocket) {
-        this.toConnect.push(websocket);
-    }
-    
-    this.tryToConnectNext = function() {
-        /*
-        for(var i =0; i < this.toConnect.length; i++) {
-            console.log(this.toConnect[i]);
-        }*/
-
-        var next = this.toConnect.shift();
-        
-        if(next) {
-            next.connect();
-        }
+        console.log('Setting up connect ' + websocket.name);
+        window.setTimeout(function() {
+            console.log('Connecting ' + websocket.name);
+            websocket.connect();
+            console.log('Done connecting' + websocket.name);
+        }, 0);
     }
 }
 
@@ -77,8 +67,6 @@ function setConnected(event) {
     } else {
         console.log("Error: Connection opened but not ready. ["+ this.parent.name + "]");
     }
-    
-    SOCKETSTOCONNECT.tryToConnectNext();
 }
 
 function reportOnOpen(event) {
@@ -107,6 +95,5 @@ function retryOnUncleanCloseH(object, event) {
     if (!event.wasClean || true) {
         object.parent.ws = null;
         SOCKETSTOCONNECT.addToConnect(object.parent);
-        SOCKETSTOCONNECT.tryToConnectNext();
     }
 }
