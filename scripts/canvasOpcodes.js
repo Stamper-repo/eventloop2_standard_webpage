@@ -20,6 +20,7 @@ var DRAWPATH = 301;
 var DRAWTEXT = 302;
 var DOTRANSFORM = 303;
 var CLEAR = 304;
+var FRAME = 305;
 
 //ScreenPathPart
 var MOVETO = 401;

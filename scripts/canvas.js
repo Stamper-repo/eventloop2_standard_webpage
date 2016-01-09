@@ -156,19 +156,30 @@ function handleCanvasOut(canvasOut) {
 }
 
 function performSetupCanvas(canvasId, zIndex, canvasDimensions, cssPosition) {
-    var canvas = getCanvas(canvasId);
+    var canvas = getCanvas(canvasId),
+        ctx;
 
     if(!canvas) {
         canvas = document.createElement('canvas');
+        buffer = document.createElement('canvas');
+
+        ctx = canvas.getContext('2d');
+        ctx.bufferCanvas = buffer;
+        ctx.bufferContext = buffer.getContext('2d');
+
         canvas.id = CANVASPREFIX + canvasId;
         canvas.style.position = "absolute";
         canvas.style.border = "";
-        
+
         getContainer().appendChild(canvas);
+    } else {
+        ctx = canvas.getContext('2d');
     }
     
     canvas.width = canvasDimensions[0];
+    ctx.bufferCanvas.width = canvasDimensions[0];
     canvas.height = canvasDimensions[1];
+    ctx.bufferCanvas.height = canvasDimensions[1];
     canvas.style.zIndex = zIndex;
     canvas.style.left = "0px";
     canvas.style.top = "0px";
@@ -186,8 +197,9 @@ function performSetupCanvas(canvasId, zIndex, canvasDimensions, cssPosition) {
         canvas.style.marginTop = (parseInt(canvas.style.marginTop) - boundingBox.top) + "px";
     }
     
-    var ctx = canvas.getContext('2d');
+
     ctx.textBaseline = "hanging";
+    ctx.bufferContext.textBaseline = "hanging";
     logActivity("SetupCanvas");
     
     //Setup at mouse for capture
@@ -212,16 +224,16 @@ function performCanvasOperations(canvasId, listCanvasOperation) {
     var ctx = getCanvas(canvasId).getContext('2d');
     
     for (var i = 0; i < listCanvasOperation.length; i++) {
-        handleCanvasOperation(ctx, listCanvasOperation[i]);
+        handleCanvasOperation(ctx.bufferContext, listCanvasOperation[i], ctx);
     }
     
     logActivity("CanvasOperations");
 }
 
 function performMeasureText(route, responseOpCode, canvasId, canvasText) {
-    var ctx = getCanvas(canvasId).getContext('2d');
-    var text = handleCanvasText(ctx, canvasText);
-    var measurements = ctx.measureText(text);
+    var ctx = getCanvas(canvasId).getContext('2d'),
+        text = handleCanvasText(ctx, canvasText),
+        measurements = ctx.measureText(text);
     
     var font = canvasText.a[1];
     var fontfamily = font.a[0];
@@ -238,7 +250,7 @@ function performMeasureText(route, responseOpCode, canvasId, canvasText) {
 
 // CanvasOperation
 // ___________________________________________________
-function handleCanvasOperation(ctx, canvasOperation) {
+function handleCanvasOperation(ctx, canvasOperation, frontCtx) {
     switch(canvasOperation.t) {
         case DRAWPATH:
             performDrawPath( ctx
@@ -261,6 +273,9 @@ function handleCanvasOperation(ctx, canvasOperation) {
             break;
         case CLEAR:
             performClear(ctx, canvasOperation.a[0]);
+            break;
+        case FRAME:
+            performFrame(frontCtx);
             break;
         default:
             error("Undefined case in handleCanvasOperation");
@@ -301,6 +316,11 @@ function performClear(ctx, clearPart) {
     handleClearPart(ctx, clearPart);
     
     logActivity("Clear");
+}
+
+function performFrame(frontCtx) {
+    frontCtx.drawImage(frontCtx.bufferCanvas, 0, 0);
+    logActivity("Frame");
 }
 
 // PathPart
