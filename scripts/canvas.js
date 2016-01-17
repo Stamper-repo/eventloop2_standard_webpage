@@ -67,10 +67,9 @@ function screenColorToCanvasColor(screenColor) {
     return "rgba(" + screenColor[0] + "," + screenColor[1] + "," + screenColor[2] + "," + screenColor[3] + ")";
 }
 
-function sendMeasuredTextResponse(route, opCode, canvasId, text, fontfamily, fontsize, alignment, width, height) {
+function sendMeasuredTextResponse(route, opCode, text, fontfamily, fontsize, alignment, width, height) {
     var responseObj = { 'r': route
                       , 'o': { 't': opCode
-                             , 'canvasid': canvasId
                              , 'canvastext': { 'text': text
                                              , 'font': { 'fontfamily': fontfamily
                                                        , 'fontsize': fontsize
@@ -114,7 +113,7 @@ function handleCanvasMessage(message) {
 function handleSystemCanvasOut(systemCanvasOut) {
     switch(systemCanvasOut.t) {
         case SYSTEMMEASURETEXT:
-            performSystemMeasureText(systemCanvasOut.a[0], systemCanvasOut.a[1]);
+            performSystemMeasureText(systemCanvasOut.a[0]);
             break;
         default:
             error("Undefined case in handleSystemCanvasOut");
@@ -122,8 +121,8 @@ function handleSystemCanvasOut(systemCanvasOut) {
     }
 }
 
-function performSystemMeasureText(canvasId, canvasText) {
-    performMeasureText(SYSTEMROUTE, SYSTEMMEASUREDTEXT, canvasId, canvasText);
+function performSystemMeasureText(canvasText) {
+    performMeasureText(SYSTEMROUTE, SYSTEMMEASUREDTEXT, canvasText);
     logActivity("SystemMeasureText");
 }
 
@@ -147,7 +146,7 @@ function handleCanvasOut(canvasOut) {
             performCanvasOperations(canvasOut.a[0], canvasOut.a[1]);
             break;
         case MEASURETEXT:
-            performMeasureText(USERROUTE, MEASUREDTEXT, canvasOut.a[0], canvasOut.a[1]);
+            performMeasureText(USERROUTE, MEASUREDTEXT, canvasOut.a[0]);
             break;
         default:
             error("Undefined case in handleCanvasOut");
@@ -231,8 +230,9 @@ function performCanvasOperations(canvasId, listCanvasOperation) {
     logActivity("CanvasOperations");
 }
 
-function performMeasureText(route, responseOpCode, canvasId, canvasText) {
-    var ctx = getCanvas(canvasId).getContext('2d'),
+var measureTextCanvas = document.createElement('canvas');
+function performMeasureText(route, responseOpCode, canvasText) {
+    var ctx = measureTextCanvas.getContext('2d'),
         text = handleCanvasText(ctx, canvasText),
         measurements = ctx.measureText(text);
     
@@ -243,7 +243,7 @@ function performMeasureText(route, responseOpCode, canvasId, canvasText) {
     var width = Math.round(measurements.width);
     var height = Math.round(fontsize); //Approximation is as good as we are going to get in Canvas
     
-    sendMeasuredTextResponse(route, responseOpCode, canvasId, text, fontfamily, fontsize, alignment, width, height);
+    sendMeasuredTextResponse(route, responseOpCode, text, fontfamily, fontsize, alignment, width, height);
     
     logActivity("MeasureText");
 }
