@@ -734,12 +734,6 @@ function handleAlignment(alignment) {
         case ALIGNCENTER:
             result = "center";
             break;
-        case ALIGNSTART:
-            result = "start";
-            break;
-        case ALIGNEND:
-            result = "end";
-            break;
         default:
             error("Undefined case in handleAlignment");
             break;

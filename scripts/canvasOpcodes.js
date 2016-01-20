@@ -76,8 +76,6 @@ var NOTEXTFILL = 2402;
 var ALIGNLEFT = 1501;
 var ALIGNRIGHT = 1502;
 var ALIGNCENTER = 1503;
-var ALIGNSTART = 1504;
-var ALIGNEND = 1505;
 
 //CanvasTransform
 var SAVE = 1601;
