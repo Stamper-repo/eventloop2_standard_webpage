@@ -30,13 +30,13 @@ function CapturableMouseElements() {
         this.elements = this.elements.filter( function(el) {
             return el.id == id;
         });
-    }
+    };
     
     this.removeCaptureElementByDomElement = function(domElement) {
         this.elements = this.elements.filter( function(el) {
             return el.domElement == domElement;
         });
-    }
+    };
     
     this.getRelativeMousePositions = function(x, y) {
         return this.elements.map( function(el) {
