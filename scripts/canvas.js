@@ -356,6 +356,9 @@ function handleScreenPathPart(ctx, screenPathPart) {
         case RECTANGLE:
             performRectangle(ctx, screenPathPart.a[0], screenPathPart.a[1]);
             break;
+        case CLOSEPATH:
+            performClosePath(ctx);
+            break;
         default:
             error("Undefined case in handleScreenPathPart");
             break;
@@ -431,6 +434,12 @@ function performRectangle(ctx, screenPoint, screenDimensions) {
             );
             
     logActivity("Rectangle");
+}
+
+function performClosePath(ctx) {
+    ctx.closePath();
+
+    logActivity("ClosePath");
 }
 
 

@@ -30,6 +30,7 @@ var QUADRATICCURVETO = 404;
 var ARCTO = 405;
 var ARC = 406;
 var RECTANGLE = 407;
+var CLOSEPATH = 408;
 
 //PathStroke
 var PATHSTROKE = 501;
