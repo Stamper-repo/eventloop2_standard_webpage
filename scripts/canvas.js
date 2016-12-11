@@ -1,4 +1,4 @@
-var DODEBUG = true;
+var DODEBUG = false;
 
 function error(errorToLog) {
     console.log("Error: " + errorToLog);
@@ -165,7 +165,6 @@ function performSetupCanvas(canvasId, zIndex, canvasDimensions, cssPosition) {
         ctx = canvas.getContext('2d');
         ctx.bufferCanvas = buffer;
         ctx.bufferContext = buffer.getContext('2d');
-        ctx.bufferContext.clears = [];
 
         canvas.id = CANVASPREFIX + canvasId;
         canvas.style.position = "absolute";
@@ -320,13 +319,7 @@ function performClear(ctx, clearPart) {
 }
 
 function performFrame(frontCtx) {
-    var bufferCtx = frontCtx.bufferContext;
-
-    for(var i = 0; i < bufferCtx.clears.length; i++) {
-        var clear = bufferCtx.clears[i];
-        frontCtx.clearRect.apply(frontCtx, clear);
-    }
-
+    frontCtx.clearRect(0, 0, frontCtx.canvas.width, frontCtx.canvas.height);
     frontCtx.drawImage(frontCtx.bufferCanvas, 0, 0);
     logActivity("Frame");
 }
@@ -459,9 +452,11 @@ function handlePathStroke(ctx, pathStroke) {
 }
 
 function performPathStroke(ctx, lineThickness, renderStyle) {
-    handleRenderStrokeStyle(ctx, renderStyle);
-    ctx.lineWidth = lineThickness;
-    ctx.stroke();
+    if(lineThickness > 0) {
+        handleRenderStrokeStyle(ctx, renderStyle);
+        ctx.lineWidth = lineThickness;
+        ctx.stroke();
+    }
     
     logActivity("PathStroke");
 }
@@ -941,12 +936,10 @@ function handleClearPart(ctx, clearPart) {
 
 function performClearRectangle(ctx, screenPoint, screenDimensions) {
     logActivity("ClearRectangle");
-    ctx.clears.push([screenPoint[0], screenPoint[1], screenDimensions[0], screenDimensions[1]]);
     ctx.clearRect(screenPoint[0], screenPoint[1], screenDimensions[0], screenDimensions[1]);
 }
 
 function performClearCanvas(ctx) {
     logActivity("ClearCanvas");
-    ctx.clears.push([0, 0, ctx.canvas.width, ctx.canvas.height]);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
