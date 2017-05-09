@@ -302,7 +302,7 @@ function performDrawText(ctx, canvasText, screenPoint, textStroke, textFill) {
     
     handleTextStroke(ctx, text, screenPoint, textStroke);
     handleTextFill(ctx, text, screenPoint, textFill);
-    
+
     logActivity("DrawText");
 }
 
@@ -670,7 +670,7 @@ function handleCanvasText(ctx, canvasText) {
     var text = canvasText.a[0];
     ctx.font = handleFont(ctx, canvasText.a[1]);
     ctx.textAlign = handleAlignment(canvasText.a[2]);
-    
+
     logActivity("handleCanvasText");
     
     return text;
@@ -699,9 +699,8 @@ function handleTextStroke(ctx, text, screenPoint, textStroke) {
 }
 
 function performTextStroke(ctx, text, screenPoint, screenLineThickness, textStrokeRenderStyle) {
-    ctx.lineWidth = screenLineThickness + "px";
+    ctx.lineWidth = screenLineThickness;
     handleRenderStrokeStyle(ctx, textStrokeRenderStyle);
-    
     ctx.strokeText(text, screenPoint[0], screenPoint[1]);
 }
 
