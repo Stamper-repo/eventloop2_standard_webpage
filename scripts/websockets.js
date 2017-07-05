@@ -43,7 +43,7 @@ function Websocket(name, ipaddress, port, onOpen, onMessage, onError, onClose) {
     }
     
     this.sendMessage = function (message) {
-                           console.log("Sending over ws[" + this.name + "]: " + message);
+                           //console.log("Sending over ws[" + this.name + "]: " + message);
                            this.ws.send(message);
                        };
     
